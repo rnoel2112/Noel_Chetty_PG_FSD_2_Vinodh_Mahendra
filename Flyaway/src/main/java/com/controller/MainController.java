@@ -25,7 +25,7 @@ import com.model.Customer;
 import com.model.Route;
 
 @WebServlet("/")
-public class RoteManagement extends HttpServlet {
+public class MainController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private RouteDao 	routeDao;
