@@ -1,0 +1,202 @@
+package com.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.model.Customer;
+
+public class CustomerDao {
+	private String jdbcURL = "jdbc:mysql://localhost:3306/flyaway?useSSL=false";
+	private String jdbcUsername = "admin";
+	private String jdbcPassword = "admin";
+	
+//	private String jdbcURL = "jdbc:mysql://localhost:3306/flyawayapp?useSSL=false";
+//	private String jdbcUsername = "admin";
+//	private String jdbcPassword = "admin";
+	
+	// custId  firstName  lastName emailId phoneNo password 
+
+	public CustomerDao() {
+	}
+
+	protected Connection getConnection() {
+		Connection connection = null;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+			
+			System.out.println("Db details " + connection.toString());
+			
+		} catch (SQLException e) {
+			// What to do // Debug
+			e.printStackTrace();
+			SqlException(e);
+		} catch (ClassNotFoundException e) {
+			// What to do // Debug
+			e.printStackTrace();
+		}
+		return connection;
+	}
+
+	public void insertUser(Customer customer) throws SQLException {
+		
+		// `custId`  `firstName`  `lastName` `emailId` `password` 
+		
+		String INSERT_SQL = "INSERT INTO Customers" + "  (firstName, lastName, emailId, phoneNo, password) VALUES "
+				+ " (?,?,?,?,?);";
+	
+		try (Connection connection = getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
+			preparedStatement.setString(1, customer.getFirstName());
+			preparedStatement.setString(2, customer.getLastName());
+			preparedStatement.setString(3, customer.getEmailId());
+			preparedStatement.setString(4, customer.getPhoneNo());
+			preparedStatement.setString(5, customer.getPassword());
+			
+			System.out.println(preparedStatement);
+			
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			SqlException(e);
+		}
+	}
+
+	public Customer getCustomer(int custId) {
+		
+		String Customer_BY_ID = "select firstName, lastName, emailId, phoneNo, password from customers where custId =?";
+		Customer customer = null;
+	
+		try (Connection connection = getConnection();		
+		
+		PreparedStatement preparedStatement = connection.prepareStatement(Customer_BY_ID);) {
+			preparedStatement.setInt(1, custId);
+			System.out.println(preparedStatement);
+		
+			System.out.println(preparedStatement);
+			
+			ResultSet rs = preparedStatement.executeQuery();
+
+			while (rs.next()) {
+				//String customerId 	= rs.getString("custId");
+				String firstName= rs.getString("firstName");
+				String lastName	= rs.getString("lastName");
+				String emailId 	= rs.getString("emailId");
+				String phoneNo 	= rs.getString("phoneNo");
+				String password = rs.getString("password");
+
+				
+				customer = new Customer();
+				
+				customer.setCustId(custId);
+				customer.setFirstName(firstName);
+				customer.setLastName(lastName);
+				customer.setEmailId(emailId);
+				customer.setPhoneNo(phoneNo);
+				customer.setPassword(password);
+				
+				System.out.println(customer.toString());
+			}
+		} catch (SQLException e) {
+			SqlException(e);
+		}
+		return customer;
+	}
+
+	public List<Customer> allCustomers() {
+
+		String SELECT_ALL = "select * from customers";
+		
+		List<Customer> customers = new ArrayList<>();
+
+		try (Connection connection = getConnection();
+
+			PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL);) {
+			
+			System.out.println(preparedStatement);
+			
+			ResultSet rs = preparedStatement.executeQuery();
+
+			// Step 4: Process the ResultSet object.
+			while (rs.next()) {
+				
+				String custId= rs.getString("custId");
+				String firstName = rs.getString("firstName");
+				String lastName	 = rs.getString("lastName");
+				String emailId 	 = rs.getString("emailId");
+				String phoneNo 	 = rs.getString("phoneNo");
+				String password  = rs.getString("password");
+				
+				Customer customer = new Customer(Integer.parseInt(custId),firstName,lastName,emailId,phoneNo,password);
+				customers.add( customer);
+			}
+		} catch (SQLException e) {
+			SqlException(e);
+		}
+		return customers;
+	}
+
+		
+	
+	
+	public boolean deleteCustomer(int custId) throws SQLException {
+		boolean rowDeleted;
+		
+		String DELETE_SQL = "delete from customers where custId = ?;";
+		
+		try (Connection connection = getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL);) {
+			preparedStatement.setInt(1, custId);
+			System.out.println(preparedStatement);
+			
+			rowDeleted = preparedStatement.executeUpdate() > 0;
+		}
+		return rowDeleted;
+	}
+
+	public boolean updateCustomer(Customer Customer) throws SQLException {
+		boolean rowUpdated;
+		
+		String UPDATE_SQL = "update customers set firstName=?, lastName=?, emailId=?,phoneNo=?,password=? where custId = ?;";
+
+		
+		try (Connection connection = getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL);) {
+			System.out.println("updated Customer :"+preparedStatement);
+
+			preparedStatement.setString(1, Customer.getFirstName());
+			preparedStatement.setString(2, Customer.getLastName());
+			preparedStatement.setString(3, Customer.getEmailId());
+			preparedStatement.setString(4, Customer.getPhoneNo());
+			preparedStatement.setString(4, Customer.getPassword());	
+			preparedStatement.setInt(8, Customer.getCustId());
+			
+			System.out.println(preparedStatement);
+			preparedStatement.executeUpdate();
+
+			rowUpdated = preparedStatement.executeUpdate() > 0;
+		}
+		return rowUpdated;
+	}
+
+	private void SqlException(SQLException ex) {
+		for (Throwable e : ex) {
+			if (e instanceof SQLException) {
+				e.printStackTrace(System.err);
+				System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+				System.err.println("Error Code: " + ((SQLException) e).getErrorCode());
+				System.err.println("Message: " + e.getMessage());
+				Throwable t = ex.getCause();
+				while (t != null) {
+					System.out.println("Cause: " + t);
+					t = t.getCause();
+				}
+			}
+		}
+	}
+
+}
