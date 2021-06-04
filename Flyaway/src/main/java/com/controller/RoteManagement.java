@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dao.AdminDao;
+import com.dao.AirlineDao;
 import com.dao.CustomerDao;
+import com.dao.PlaceDao;
 import com.dao.RouteDao;
 import com.model.Route;
 
@@ -23,8 +26,12 @@ import com.model.Route;
 public class RoteManagement extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private RouteDao routeDao;
+	private RouteDao 	routeDao;
 	private CustomerDao customerDao;
+	private AdminDao 	adminDao;
+	private AirlineDao  airlineDao;
+	private PlaceDao	placeDao;
+	
 	
 	//Lets initialize our database object
 	public void init(ServletConfig config) throws ServletException {
@@ -91,7 +98,7 @@ public class RoteManagement extends HttpServlet {
 					System.out.println ("routeDao is null");
 					routeDao = new RouteDao();
 				}
-				Route aRoute = routeDao.getRoute(routeId);
+				Route aRoute = routeDao.getByKey(routeId);
 				System.out.println(aRoute.toString());
 				request.setAttribute("route", aRoute);
 				formtoCall(request, response,"register-user-form.jsp");
@@ -137,7 +144,7 @@ public class RoteManagement extends HttpServlet {
 	    if(userName.equals("sim") && password.equals("sim")){ 
 	    	
 	    	request.setAttribute("title", "Admin - Add Route");
-	    	List<Route> listRoutes = routeDao.allRoutes();
+	    	List<Route> listRoutes = routeDao.listOfAll();
 			request.setAttribute("routes", listRoutes);
 	    	formtoCall(request, response,"add-route-form.jsp");
 	    }  
@@ -178,7 +185,7 @@ public class RoteManagement extends HttpServlet {
 	    if(emailId.equals("sim@sim.com") && password.equals("sim")){ 
 	    	
 	    	request.setAttribute("title", "Admin - Add Route");
-	    	List<Route> listRoutes = routeDao.allRoutes();
+	    	List<Route> listRoutes = routeDao.listOfAll();
 			request.setAttribute("routes", listRoutes);
 	    	formtoCall(request, response,"index.jsp");
 	    }  
@@ -196,7 +203,7 @@ public class RoteManagement extends HttpServlet {
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
-		List<Route> listRoutes = routeDao.allRoutes();
+		List<Route> listRoutes = routeDao.listOfAll();
 		request.setAttribute("routes", listRoutes);
 		RequestDispatcher dispatcher = request.getRequestDispatcher(jspToList);
 		dispatcher.forward(request, response);
@@ -222,7 +229,7 @@ public class RoteManagement extends HttpServlet {
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
-		List<Route> listRoutes = routeDao.allRoutesBy(fromCity,toCity,airline,fromDate);
+		List<Route> listRoutes = routeDao.listOfAllBy(fromCity,toCity,airline,fromDate);
 		request.setAttribute("routes", listRoutes);
 		RequestDispatcher dispatcher = request.getRequestDispatcher(jspToList);
 		dispatcher.forward(request, response);
@@ -236,7 +243,7 @@ public class RoteManagement extends HttpServlet {
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
-		Route aRoute = routeDao.getRoute(routeId);
+		Route aRoute = routeDao.getByKey(routeId);
 		System.out.println(aRoute.toString());
 		RequestDispatcher dispatcher = request.getRequestDispatcher("update-route-form.jsp");
 		request.setAttribute("route", aRoute);
@@ -252,7 +259,6 @@ public class RoteManagement extends HttpServlet {
 		String fromCity = request.getParameter("fromCity");
 		String toCity 	= request.getParameter("toCity");	
 		String airline 	= request.getParameter("airline");
-		int    capacity = Integer.parseInt(request.getParameter("capacity"));
 		Date   fromDate = dateFormat.parse(request.getParameter("fromDate"));
 		Date   toDate 	= dateFormat.parse(request.getParameter("toDate"));
 		Long	price 	= Long.parseLong(request.getParameter("price"));
@@ -261,7 +267,6 @@ public class RoteManagement extends HttpServlet {
 		art.setFromCity(fromCity);
 		art.setToCity(toCity);
 		art.setAirline(airline);
-		art.setCapacity(capacity);
 		art.setFromDate(fromDate);
 		art.setToDate(toDate);
 		art.setPrice(price);
@@ -269,14 +274,14 @@ public class RoteManagement extends HttpServlet {
 		System.out.println(art.toString());
 		
 		// Route aroute = new Route(fromCity,toCity,airline,capacity,fromDate, toDate,price);
-		
 		//routeDao.insertUser(aroute);
+		
 		if (routeDao == null ){
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
-		routeDao.insertUser(art);
-    	List<Route> listRoutes = routeDao.allRoutes();
+		routeDao.inser(art);
+    	List<Route> listRoutes = routeDao.listOfAll();
 		request.setAttribute("routes", listRoutes);
 		formtoCall(request, response,"add-route-form.jsp");
 		//response.sendRedirect("list");
@@ -295,7 +300,6 @@ public class RoteManagement extends HttpServlet {
 		String fromCity = request.getParameter("fromCity");
 		String toCity 	= request.getParameter("toCity");
 		String airline 	= request.getParameter("airline");
-		int    capacity = Integer.parseInt(request.getParameter("capacity"));
 		Date   fromDate = dateFormat.parse(request.getParameter("fromDate"));
 		Date   toDate 	= dateFormat.parse(request.getParameter("toDate"));
 		Long	price 	= Long.parseLong(request.getParameter("price"));
@@ -305,7 +309,6 @@ public class RoteManagement extends HttpServlet {
 		art.setFromCity(fromCity);
 		art.setToCity(toCity);
 		art.setAirline(airline);
-		art.setCapacity(capacity);
 		art.setFromDate(fromDate);
 		art.setToDate(toDate);
 		art.setPrice(price);
@@ -314,8 +317,8 @@ public class RoteManagement extends HttpServlet {
 		
 		//Route aroute = new Route(routeid,fromCity,toCity,airline,capacity,fromDate, toDate,price);
 	
-		routeDao.updateRoute(art);
-    	List<Route> listRoutes = routeDao.allRoutes();
+		routeDao.update(art);
+    	List<Route> listRoutes = routeDao.listOfAll();
 		request.setAttribute("routes", listRoutes);
 		formtoCall(request, response,"add-route-form.jsp");
 	}
@@ -327,8 +330,8 @@ public class RoteManagement extends HttpServlet {
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
-		routeDao.deleteRoute(routeId);
-    	List<Route> listRoutes = routeDao.allRoutes();
+		routeDao.delete(routeId);
+    	List<Route> listRoutes = routeDao.listOfAll();
 		request.setAttribute("routes", listRoutes);
 		formtoCall(request, response,"add-route-form.jsp");
 		//response.sendRedirect("list");

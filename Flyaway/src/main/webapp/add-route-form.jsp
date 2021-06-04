@@ -17,7 +17,6 @@
 			<input type="text" id="fromCity"name="fromCity" placeholder="From City" required>
 			<input type="text" id="toCity"name="toCity" placeholder="To City" required>
 			<input type="text" id="airline"name="airline" placeholder="Airline" required>
-			<input type="text" id="capacity"name="capacity" placeholder="Capacity" required>
 			<input type="date" id="fromDate"name="fromDate" placeholder="From Date" required>
 			<input type="date" id="toDate"name="toDate" placeholder="To Date" required>
 			<input type="text" id="price" name="price" placeholder="price" required><br>
@@ -36,7 +35,6 @@
 		    <th>From City</th>
 		    <th>To City</th>
 		    <th>Airline</th>
-		    <th>Capacity</th>
 		    <th>From Date </th>
 		    <th>To Date </th>
 		    <th>Price</th>
@@ -48,7 +46,6 @@
 		      <td>${route.fromCity}</td>
 		      <td>${route.toCity}</td>
 		      <td>${route.airline}</td>
-		      <td>${route.capacity}</td>
 		      <td>${route.fromDate}</td>
 		      <td>${route.toDate}</td>
 		      <td>&#36;${route.price}</td>

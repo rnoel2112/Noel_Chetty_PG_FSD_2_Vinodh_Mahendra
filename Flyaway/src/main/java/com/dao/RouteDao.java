@@ -20,11 +20,7 @@ public class RouteDao {
 	private String jdbcUsername = "admin";
 	private String jdbcPassword = "admin";
 	
-//	private String jdbcURL = "jdbc:mysql://localhost:3306/flyawayapp?useSSL=false";
-//	private String jdbcUsername = "admin";
-//	private String jdbcPassword = "admin";
-	
-	// routeId, fromCity,toCity, airline;, capacity,fromDate,toDate;price;
+	// routeId, fromCity,toCity, airline,fromDate,toDate,price;
 
 	public RouteDao() {
 	}
@@ -48,20 +44,19 @@ public class RouteDao {
 		return connection;
 	}
 
-	public void insertUser(Route route) throws SQLException {
+	public void inser(Route route) throws SQLException {
 		
-		String INSERT_SQL = "INSERT INTO routes" + "  (fromCity, toCity, airline,capacity,fromDate,toDate,price) VALUES "
-				+ " (?, ?, ?,?,?,?,?);";
+		String INSERT_SQL = "INSERT INTO routes" + "  (fromCity, toCity, airline,fromDate,toDate,price) VALUES "
+				+ " (?, ?, ?,?,?,?);";
 	
 		try (Connection connection = getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
 			preparedStatement.setString(1, route.getFromCity());
 			preparedStatement.setString(2, route.getToCity());
 			preparedStatement.setString(3, route.getAirline());
-			preparedStatement.setInt(4, route.getCapacity());
-			preparedStatement.setDate(5, new java.sql.Date(route.getFromDate().getTime()));
-			preparedStatement.setDate(6, new java.sql.Date(route.getToDate().getTime()));
-			preparedStatement.setFloat(7, route.getPrice());
+			preparedStatement.setDate(4, new java.sql.Date(route.getFromDate().getTime()));
+			preparedStatement.setDate(5, new java.sql.Date(route.getToDate().getTime()));
+			preparedStatement.setFloat(6, route.getPrice());
 			
 			System.out.println(preparedStatement);
 			
@@ -71,17 +66,15 @@ public class RouteDao {
 		}
 	}
 
-	public Route getRoute(int arouteId) {
+	public Route getByKey(int arouteId) {
 		
-		String ROUTE_BY_ID = "select fromCity, toCity, airline,capacity,fromDate,toDate,price from routes where routeId =?";
+		String SELECT_BY = "select fromCity, toCity, airline,fromDate,toDate,price from routes where routeId =?";
 		Route route = null;
 	
 		try (Connection connection = getConnection();		
 		
-		PreparedStatement preparedStatement = connection.prepareStatement(ROUTE_BY_ID);) {
+		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY);) {
 			preparedStatement.setInt(1, arouteId);
-			System.out.println(preparedStatement);
-		
 			System.out.println(preparedStatement);
 			
 			ResultSet rs = preparedStatement.executeQuery();
@@ -91,7 +84,6 @@ public class RouteDao {
 				String fromCity = rs.getString("fromCity");
 				String toCity 	= rs.getString("toCity");
 				String airline 	= rs.getString("airline");
-				int    capacity = rs.getInt("capacity");
 				Date   fromDate = rs.getDate("fromDate");
 				Date   toDate 	= rs.getDate("toDate");
 				Long	price 	= rs.getLong("price");
@@ -102,7 +94,6 @@ public class RouteDao {
 				route.setFromCity(fromCity);
 				route.setToCity(toCity);
 				route.setAirline(airline);
-				route.setCapacity(capacity);
 				route.setFromDate(fromDate);
 				route.setToDate(toDate);
 				route.setPrice(price);
@@ -117,7 +108,7 @@ public class RouteDao {
 		return route;
 	}
 
-	public List<Route> allRoutes() {
+	public List<Route> listOfAll() {
 
 		String SELECT_ALL = "select * from routes";
 		
@@ -131,19 +122,18 @@ public class RouteDao {
 			
 			ResultSet rs = preparedStatement.executeQuery();
 
-			// Step 4: Process the ResultSet object.
+			
 			while (rs.next()) {
 				
 				String routeId 	= rs.getString("routeId");
 				String fromCity = rs.getString("fromCity");
 				String toCity 	= rs.getString("toCity");
 				String airline 	= rs.getString("airline");
-				int    capacity = rs.getInt("capacity");
 				Date   fromDate = rs.getDate("fromDate");
 				Date   toDate 	= rs.getDate("toDate");
 				Long	price 	= rs.getLong("price");
 				
-				Route route = new Route(Integer.parseInt(routeId),fromCity,toCity,airline,capacity,fromDate, toDate,price);
+				Route route = new Route(Integer.parseInt(routeId),fromCity,toCity,airline,fromDate, toDate,price);
 				routes.add( route);
 			}
 		} catch (SQLException e) {
@@ -152,7 +142,7 @@ public class RouteDao {
 		return routes;
 	}
 
-	public List<Route> allRoutesBy(String fCity, String tCity, String air, Date aDate ) {
+	public List<Route> listOfAllBy(String fCity, String tCity, String air, Date aDate ) {
 
 		String SELECT_ALL_BY = "select * from routes  ";
 		
@@ -170,19 +160,18 @@ public class RouteDao {
 			
 			ResultSet rs = preparedStatement.executeQuery();
 
-			// Step 4: Process the ResultSet object.
+	
 			while (rs.next()) {
 				
 				String routeId 	= rs.getString("routeId");
 				String fromCity = rs.getString("fromCity");
 				String toCity 	= rs.getString("toCity");
 				String airline 	= rs.getString("airline");
-				int    capacity = rs.getInt("capacity");
 				Date   fromDate = rs.getDate("fromDate");
 				Date   toDate 	= rs.getDate("toDate");
 				Long	price 	= rs.getLong("price");
 				
-				Route route = new Route(Integer.parseInt(routeId),fromCity,toCity,airline,capacity,fromDate, toDate,price);
+				Route route = new Route(Integer.parseInt(routeId),fromCity,toCity,airline,fromDate, toDate,price);
 				routes.add( route);
 			}
 		} catch (SQLException e) {
@@ -193,8 +182,8 @@ public class RouteDao {
 	
 	
 	
-	public boolean deleteRoute(int routeId) throws SQLException {
-		boolean rowDeleted;
+	public boolean delete(int routeId) throws SQLException {
+		boolean status;
 		
 		String DELETE_SQL = "delete from routes where routeId = ?;";
 		
@@ -203,16 +192,16 @@ public class RouteDao {
 			preparedStatement.setInt(1, routeId);
 			System.out.println(preparedStatement);
 			
-			rowDeleted = preparedStatement.executeUpdate() > 0;
+			status = preparedStatement.executeUpdate() > 0;
 		}
-		return rowDeleted;
+		return status;
 	}
 
-	public boolean updateRoute(Route route) throws SQLException {
-		boolean rowUpdated;
+	public boolean update(Route route) throws SQLException {
+		boolean status;
 		
 	//	 "update routes set fromCity=?, toCity=?, airline=?,capacity=?,fromDate=?,toDate=?,price=? where routeId = ?;";
-		String UPDATE_SQL = "update routes set fromCity=?, toCity=?, airline=?,capacity=?,fromDate=?,toDate=?,price=? where routeId = ?;";
+		String UPDATE_SQL = "update routes set fromCity=?, toCity=?, airline=?,fromDate=?,toDate=?,price=? where routeId = ?;";
 
 		
 		try (Connection connection = getConnection();
@@ -222,18 +211,17 @@ public class RouteDao {
 			preparedStatement.setString(1, route.getFromCity());
 			preparedStatement.setString(2, route.getToCity());
 			preparedStatement.setString(3, route.getAirline());
-			preparedStatement.setInt(4, route.getCapacity());
-			preparedStatement.setDate(5, new java.sql.Date(route.getFromDate().getTime()));
-			preparedStatement.setDate(6, new java.sql.Date(route.getToDate().getTime()));
-			preparedStatement.setFloat(7, route.getPrice());
-			preparedStatement.setInt(8, route.getRouteId());
+			preparedStatement.setDate(4, new java.sql.Date(route.getFromDate().getTime()));
+			preparedStatement.setDate(5, new java.sql.Date(route.getToDate().getTime()));
+			preparedStatement.setFloat(6, route.getPrice());
+			preparedStatement.setInt(7,route.getRouteId());
 			
 			System.out.println(preparedStatement);
 			preparedStatement.executeUpdate();
 
-			rowUpdated = preparedStatement.executeUpdate() > 0;
+			status = preparedStatement.executeUpdate() > 0;
 		}
-		return rowUpdated;
+		return status;
 	}
 
 	private void SqlException(SQLException ex) {

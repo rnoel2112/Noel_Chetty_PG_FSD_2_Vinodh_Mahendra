@@ -1,7 +1,5 @@
 package com.model;
 
-import java.util.Date;
-
 public class Customer {
 	
 	private int 	custId;

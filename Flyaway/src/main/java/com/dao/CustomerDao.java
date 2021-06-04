@@ -15,9 +15,6 @@ public class CustomerDao {
 	private String jdbcUsername = "admin";
 	private String jdbcPassword = "admin";
 	
-//	private String jdbcURL = "jdbc:mysql://localhost:3306/flyawayapp?useSSL=false";
-//	private String jdbcUsername = "admin";
-//	private String jdbcPassword = "admin";
 	
 	// custId  firstName  lastName emailId phoneNo password 
 
@@ -43,11 +40,11 @@ public class CustomerDao {
 		return connection;
 	}
 
-	public void insertUser(Customer customer) throws SQLException {
+	public void insert(Customer customer) throws SQLException {
 		
 		// `custId`  `firstName`  `lastName` `emailId` `password` 
 		
-		String INSERT_SQL = "INSERT INTO Customers" + "  (firstName, lastName, emailId, phoneNo, password) VALUES "
+		String INSERT_SQL = "INSERT INTO customer" + "  (firstName, lastName, emailId, phoneNo, password) VALUES "
 				+ " (?,?,?,?,?);";
 	
 		try (Connection connection = getConnection();
@@ -66,17 +63,15 @@ public class CustomerDao {
 		}
 	}
 
-	public Customer getCustomer(int custId) {
+	public Customer getByKey(int custId) {
 		
-		String Customer_BY_ID = "select firstName, lastName, emailId, phoneNo, password from customers where custId =?";
+		String SELECT_BY = "select firstName, lastName, emailId, phoneNo, password from customer where custId =?";
 		Customer customer = null;
 	
 		try (Connection connection = getConnection();		
 		
-		PreparedStatement preparedStatement = connection.prepareStatement(Customer_BY_ID);) {
+		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY);) {
 			preparedStatement.setInt(1, custId);
-			System.out.println(preparedStatement);
-		
 			System.out.println(preparedStatement);
 			
 			ResultSet rs = preparedStatement.executeQuery();
@@ -107,9 +102,9 @@ public class CustomerDao {
 		return customer;
 	}
 
-	public List<Customer> allCustomers() {
+	public List<Customer> listOfAll() {
 
-		String SELECT_ALL = "select * from customers";
+		String SELECT_ALL = "select * from customer";
 		
 		List<Customer> customers = new ArrayList<>();
 
@@ -121,7 +116,7 @@ public class CustomerDao {
 			
 			ResultSet rs = preparedStatement.executeQuery();
 
-			// Step 4: Process the ResultSet object.
+	
 			while (rs.next()) {
 				
 				String custId= rs.getString("custId");
@@ -143,44 +138,44 @@ public class CustomerDao {
 		
 	
 	
-	public boolean deleteCustomer(int custId) throws SQLException {
-		boolean rowDeleted;
+	public boolean delete(int custId) throws SQLException {
+		boolean status;
 		
-		String DELETE_SQL = "delete from customers where custId = ?;";
+		String DELETE_SQL = "delete from customer where custId = ?;";
 		
 		try (Connection connection = getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL);) {
 			preparedStatement.setInt(1, custId);
 			System.out.println(preparedStatement);
 			
-			rowDeleted = preparedStatement.executeUpdate() > 0;
+			status = preparedStatement.executeUpdate() > 0;
 		}
-		return rowDeleted;
+		return status;
 	}
 
-	public boolean updateCustomer(Customer Customer) throws SQLException {
-		boolean rowUpdated;
+	public boolean update(Customer customer) throws SQLException {
+		boolean status;
 		
-		String UPDATE_SQL = "update customers set firstName=?, lastName=?, emailId=?,phoneNo=?,password=? where custId = ?;";
+		String UPDATE_SQL = "update customer set firstName=?, lastName=?, emailId=?,phoneNo=?,password=? where custId = ?;";
 
 		
 		try (Connection connection = getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL);) {
-			System.out.println("updated Customer :"+preparedStatement);
+			System.out.println("updated customer :"+preparedStatement);
 
-			preparedStatement.setString(1, Customer.getFirstName());
-			preparedStatement.setString(2, Customer.getLastName());
-			preparedStatement.setString(3, Customer.getEmailId());
-			preparedStatement.setString(4, Customer.getPhoneNo());
-			preparedStatement.setString(4, Customer.getPassword());	
-			preparedStatement.setInt(8, Customer.getCustId());
+			preparedStatement.setString(1, customer.getFirstName());
+			preparedStatement.setString(2, customer.getLastName());
+			preparedStatement.setString(3, customer.getEmailId());
+			preparedStatement.setString(4, customer.getPhoneNo());
+			preparedStatement.setString(4, customer.getPassword());	
+			preparedStatement.setInt(8, customer.getCustId());
 			
 			System.out.println(preparedStatement);
 			preparedStatement.executeUpdate();
 
-			rowUpdated = preparedStatement.executeUpdate() > 0;
+			status = preparedStatement.executeUpdate() > 0;
 		}
-		return rowUpdated;
+		return status;
 	}
 
 	private void SqlException(SQLException ex) {
