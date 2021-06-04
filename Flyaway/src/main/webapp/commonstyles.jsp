@@ -30,6 +30,8 @@
 
 <title><c:out value="${title}">Flayaway Home</c:out></title>
 <h3 STYLE="background-color:red;"> <c:out value="${error}"></c:out> </h3>
+<h3 STYLE="background-color:lightblue;"> <c:out value="${info}"></c:out> </h3>
+
 <body>
  <body style="background-color:LightBlue;">
 </body>

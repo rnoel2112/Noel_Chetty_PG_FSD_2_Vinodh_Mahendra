@@ -17,7 +17,7 @@
 			<input type="text" id="toCity" 	name="toCity"   value="${route.toCity}"  placeholder="To City"   required><br>
 			<input type="text" id="airline" name="airline"  value="${route.airline}" placeholder="Airline"   required><br>
 			<input type="date" id="fromDate"name="fromDate" value="${route.fromDate}"placeholder="From Date" required><br>
-			<input type="date" id="toDate"  name="toDate"   value="${route.toDate}"  placeholder="To Date" required><br>			<input type="text" id="capacity"name="capacity" value="${route.capacity}"placeholder="Capacity" required><br>
+			<input type="date" id="toDate"  name="toDate"   value="${route.toDate}"  placeholder="To Date" required><br>			
 			<input type="text" id="airline" name="price"    value="${route.price}"   placeholder="Price" required><br><br>
 			<button type="submit">Update</button> &nbsp;
 			<a href="${pageContext.request.contextPath}/add-route">Back</a> <br>

@@ -100,7 +100,6 @@ public class RouteDao {
 				
 				System.out.println(route.toString());
 				
-				//route = new Route(Integer.parseInt(routeId),fromCity,toCity,airline,capacity,fromDate, toDate,price);
 			}
 		} catch (SQLException e) {
 			SqlException(e);
@@ -199,8 +198,7 @@ public class RouteDao {
 
 	public boolean update(Route route) throws SQLException {
 		boolean status;
-		
-	//	 "update routes set fromCity=?, toCity=?, airline=?,capacity=?,fromDate=?,toDate=?,price=? where routeId = ?;";
+	
 		String UPDATE_SQL = "update routes set fromCity=?, toCity=?, airline=?,fromDate=?,toDate=?,price=? where routeId = ?;";
 
 		

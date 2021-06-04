@@ -63,7 +63,7 @@ public class AdminDao {
 
 	public Admin getByKey(String userName) {
 		
-		String SELECT_BY = "select passWord from admin where userName =?";
+		String SELECT_BY = "select password, userName from admin where userName =?";
 		Admin admin = null;
 	
 		try (Connection connection = getConnection();		

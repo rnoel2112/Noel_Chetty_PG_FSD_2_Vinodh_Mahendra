@@ -11,7 +11,7 @@
 <h2>Registration</h2>
 
 	<div>
- 		<form action="${pageContext.request.contextPath }/book-process" method ="post"> 
+ 		<form action="${pageContext.request.contextPath }/payment-process" method ="post"> 
  		
  			Route Id:<input type="text" id="routeId"name="routeId" value="${route.routeId}" STYLE="background-color:lightblue;"  readonly>
 			From City:<input type="text" id="fromCity"name="fromCity" value="${route.fromCity}" STYLE="background-color:lightblue;" readonly>
@@ -21,10 +21,12 @@
 
 			<h4> To Book Your Flight - Please register below </h4>
  		
-			e-mail Id:<input type="email" id="emailId"name="emailId" placeholder="example@gmail.com" required><br>
-			PhoneNo:<input type="text" id="phoneNo"name="phoneNo" placeholder="Phone No" required><br>
-			Password&nbsp;:<input type="password" id="password" name="password" placeholder="password" required><br><br>
-			<button type="submit">Register</button> &nbsp;
+ 			First Name<input type="text" id="firstName"name="firstName" placeholder="First Name" required><br>
+ 			Last Name <input type="text" id="lastName"name="lastName" placeholder="Last Name" required><br>
+			e-mail Id <input type="email" id="emailId"name="emailId" placeholder="example@gmail.com" required><br>
+			Phone No  <input type="text" id="phoneNo"name="phoneNo" placeholder="Phone No" required><br>
+			Password  <input type="password" id="password" name="password" placeholder="password" required><br><br>
+			<button type="submit">Register & Pay </button> &nbsp;
 			<a href="${pageContext.request.contextPath}/">Cancel</a> <br>
 		</form>	
 		

@@ -20,6 +20,8 @@ import com.dao.AirlineDao;
 import com.dao.CustomerDao;
 import com.dao.PlaceDao;
 import com.dao.RouteDao;
+import com.model.Admin;
+import com.model.Customer;
 import com.model.Route;
 
 @WebServlet("/")
@@ -37,6 +39,9 @@ public class RoteManagement extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		routeDao 	= new RouteDao();
 		customerDao = new CustomerDao();
+		adminDao	= new AdminDao();
+		placeDao	= new PlaceDao();
+		airlineDao	= new AirlineDao();
 	}
 	
 	//
@@ -62,6 +67,11 @@ public class RoteManagement extends HttpServlet {
 			case "/password-process":
 				passwordProcess(request, response);
 				break;
+				
+			case "/payment-process":
+				paymentProcess(request, response);
+				break;
+				
 			case "/places":
 				formtoCall(request, response,"placess-form.jsp");
 				break;
@@ -90,6 +100,10 @@ public class RoteManagement extends HttpServlet {
 				
 			case "/search":
 				listRoutesBy(request, response,"index.jsp");
+				break;
+				
+			case "/success":
+				formtoCall(request, response,"success.jsp");
 				break;
 				
 			case "/book":	
@@ -136,13 +150,15 @@ public class RoteManagement extends HttpServlet {
 	private void adminRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
-	    String userName=request.getParameter("userName");  
-	    String password=request.getParameter("password");
+	    String userName	=request.getParameter("userName");  
+	    String password	=request.getParameter("password");
 	    
+		Admin admin = adminDao.getByKey(userName);
+		
+		System.out.println(admin.toString());    
 	    System.out.println ("userName:"+ userName +" password:"+ password );   
 	    
-	    if(userName.equals("sim") && password.equals("sim")){ 
-	    	
+	    if(password.equals(admin.getPassword())){ 	
 	    	request.setAttribute("title", "Admin - Add Route");
 	    	List<Route> listRoutes = routeDao.listOfAll();
 			request.setAttribute("routes", listRoutes);
@@ -157,8 +173,64 @@ public class RoteManagement extends HttpServlet {
 	private void passwordProcess(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
-		// TODO
+		String userName	=request.getParameter("userName");  
+		String oPassword	=request.getParameter("oldPassword");
+		String nPassword	=request.getParameter("newPassword");
+		
+		Admin admin = adminDao.getByKey(userName);
+		if(oPassword.equals(admin.getPassword())){ 	
+			admin.setPassword(nPassword);
+			adminDao.update(admin); 
+			request.setAttribute("info", "Password changed successfully - relogin");      
+			formtoCall(request, response,"validate-admin-form.jsp");
+	    } 
+		System.out.println(admin.toString());    
+		
+	    //should we invalidate the session ?
+        request.setAttribute("error", "Please Check - Invalid user or password");      
+	    formtoCall(request, response,"validate-admin-form.jsp");
 	}
+	
+	private void paymentProcess(HttpServletRequest request, HttpServletResponse response) 
+			throws SQLException, IOException, Exception {
+		
+		String firstName=request.getParameter("firstName");  
+		String lastName	=request.getParameter("lastName");
+		String emailId	=request.getParameter("emailId");
+		String phoneNo	=request.getParameter("phoneNo");
+		String password	=request.getParameter("password");
+		
+		Customer customer = new Customer();
+		customer.setFirstName(firstName);
+		customer.setLastName(lastName);
+		customer.setEmailId(emailId);
+		customer.setPhoneNo(phoneNo);
+		customer.setPassword(password);
+		
+		System.out.println(customer.toString());
+	
+		customerDao.insert(customer); // TODO Check for dupe
+		
+		
+		String fromCity = request.getParameter("fromCity");
+		String toCity 	= request.getParameter("toCity");	
+		String airline 	= request.getParameter("airline");
+		Long	price 	= Long.parseLong(request.getParameter("price"));
+
+		Route route = new Route();
+		route.setFromCity(fromCity);
+		route.setToCity(toCity);
+		route.setAirline(airline);
+		route.setPrice(price);
+	
+		request.setAttribute("route", route);
+		request.setAttribute("customer", customer);
+  
+		formtoCall(request, response,"dummyPayment.jsp");
+	
+	}
+	
+	
 	
 	private void placeProcess(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
