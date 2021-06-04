@@ -21,7 +21,9 @@ import com.dao.CustomerDao;
 import com.dao.PlaceDao;
 import com.dao.RouteDao;
 import com.model.Admin;
+import com.model.Airline;
 import com.model.Customer;
+import com.model.Place;
 import com.model.Route;
 
 @WebServlet("/")
@@ -155,6 +157,9 @@ public class MainController extends HttpServlet {
 	    
 		Admin admin = adminDao.getByKey(userName);
 		
+		List<Airline> listAirlines  = airlineDao.listOfAll();
+		List<Place> listPlaces 		= placeDao.listOfAll();
+		
 		System.out.println(admin.toString());    
 	    System.out.println ("userName:"+ userName +" password:"+ password );   
 	    
@@ -162,6 +167,10 @@ public class MainController extends HttpServlet {
 	    	request.setAttribute("title", "Admin - Add Route");
 	    	List<Route> listRoutes = routeDao.listOfAll();
 			request.setAttribute("routes", listRoutes);
+	    	
+			request.setAttribute("airlines", listAirlines);
+			request.setAttribute("places", listPlaces);
+			
 	    	formtoCall(request, response,"add-route-form.jsp");
 	    }  
 	   
@@ -328,22 +337,35 @@ public class MainController extends HttpServlet {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				
-		String fromCity = request.getParameter("fromCity");
-		String toCity 	= request.getParameter("toCity");	
-		String airline 	= request.getParameter("airline");
+//		String fromCity = request.getParameter("fromCity");
+//		String toCity 	= request.getParameter("toCity");	
+		
 		Date   fromDate = dateFormat.parse(request.getParameter("fromDate"));
 		Date   toDate 	= dateFormat.parse(request.getParameter("toDate"));
 		Long	price 	= Long.parseLong(request.getParameter("price"));
-
+		
+		
+		Airline airline	= airlineDao.getByKey(Integer.parseInt(request.getParameter("airlineId")));
+		String code 	= airline.getCode();
+		
+		Place place		= placeDao.getByKey(Integer.parseInt(request.getParameter("placeId")));
+		String sCity = place.getSourceCity();
+		String tCity = place.getDestinationCity();
+				
 		Route art = new Route();
-		art.setFromCity(fromCity);
-		art.setToCity(toCity);
-		art.setAirline(airline);
+	//	art.setFromCity(fromCity);
+	//	art.setToCity(toCity);
+		art.setFromCity(sCity);
+		art.setToCity(tCity);
+
+		art.setAirline(code);
 		art.setFromDate(fromDate);
 		art.setToDate(toDate);
 		art.setPrice(price);
 		
 		System.out.println(art.toString());
+		System.out.println(place.toString());
+		System.out.println(airline.toString());
 		
 		// Route aroute = new Route(fromCity,toCity,airline,capacity,fromDate, toDate,price);
 		//routeDao.insertUser(aroute);
@@ -354,7 +376,14 @@ public class MainController extends HttpServlet {
 		}
 		routeDao.inser(art);
     	List<Route> listRoutes = routeDao.listOfAll();
-		request.setAttribute("routes", listRoutes);
+    	request.setAttribute("routes", listRoutes);
+    	
+    	List<Airline> listAirlines = airlineDao.listOfAll();
+    	request.setAttribute("airlines", listAirlines);
+    	
+    	List<Place> listPlaces = placeDao.listOfAll();
+    	request.setAttribute("places", listPlaces);
+    	
 		formtoCall(request, response,"add-route-form.jsp");
 		//response.sendRedirect("list");
 	}

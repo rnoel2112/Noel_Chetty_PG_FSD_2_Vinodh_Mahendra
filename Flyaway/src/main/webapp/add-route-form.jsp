@@ -11,19 +11,37 @@
 <h2>Admin Maintanance module</h2>
 <div>
 
-
-
- 		<form action="insert" method ="post"> 
-			<input type="text" id="fromCity"name="fromCity" placeholder="From City" required>
+	
+ 		<form action="insert" method ="post" > 
+ 			<select name="placeId">
+        		<c:forEach items="${places}" var="place">
+            		<option value="${place.placeId}">${place.sourceCity}</option>
+        		</c:forEach>
+    		</select>
+    		 <select name="placeId">
+        		<c:forEach items="${places}" var="place">
+            		<option value="${place.placeId}">${place.destinationCity}</option>
+        		</c:forEach>
+    		</select>
+    		
+	<!-- 		<input type="text" id="fromCity"name="fromCity" placeholder="From City" required>
 			<input type="text" id="toCity"name="toCity" placeholder="To City" required>
-			<input type="text" id="airline"name="airline" placeholder="Airline" required>
+	 -->		
+			<select name="airlineId">
+        		<c:forEach items="${airlines}" var="airline">
+            		<option value="${airline.airlineId}">${airline.code}</option>
+        		</c:forEach>
+    		</select>
+			<!-- <input type="text" id="airline"name="airline" placeholder="Airline" required> -->
 			<input type="date" id="fromDate"name="fromDate" placeholder="From Date" required>
 			<input type="date" id="toDate"name="toDate" placeholder="To Date" required>
 			<input type="text" id="price" name="price" placeholder="price" required><br>
 
-			<button type="submit">Add</button> &nbsp;
-			<a href="${pageContext.request.contextPath}/airlines">Airlines</a> &nbsp;
-			<a href="${pageContext.request.contextPath}/places">Places</a> &nbsp;&nbsp;
+			<button type="submit">Add</button> &nbsp;&nbsp;&nbsp;
+			
+<%-- 			<a href="${pageContext.request.contextPath}/airlines">Airlines</a> &nbsp;
+			<a href="${pageContext.request.contextPath}/places">Places</a>  --%>
+			
 			<a href="${pageContext.request.contextPath}/">Back</a> <br>
 		</form>	
 		

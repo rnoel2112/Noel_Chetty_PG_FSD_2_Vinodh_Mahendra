@@ -64,7 +64,7 @@ public class PlaceDao {
 	public Place getByKey(int placeId) {
 		
 		
-		String SELECT_BY = "select placeId,sourceCity,destinationCity from places where airlineId =?";
+		String SELECT_BY = "select placeId,sourceCity,destinationCity from places where placeId =?";
 		Place place = null;
 	
 		try (Connection connection = getConnection();		
