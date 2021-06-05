@@ -12,9 +12,7 @@
 
 	<div>
  		<form action="success" method ="post"> 
- 		
- 			<h4> Congratulations Booking confirmed  </h4><br>
- 	
+ 			<h4 style="color:Tomato;"> Congratulations Booking confirmed  </h4><br><br>
 			<a href="${pageContext.request.contextPath}/">OK</a> <br>
 		</form>	
 		

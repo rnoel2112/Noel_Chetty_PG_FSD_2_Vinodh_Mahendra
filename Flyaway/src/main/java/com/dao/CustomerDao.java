@@ -102,6 +102,48 @@ public class CustomerDao {
 		return customer;
 	}
 
+public Customer getByKey(String aemailId) {
+		
+		String SELECT_BY = "select custId, firstName, lastName, emailId, phoneNo, password from customer where emailId =?";
+		Customer customer = null;
+	
+		try (Connection connection = getConnection();		
+		
+		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY);) {
+			preparedStatement.setString(1, aemailId);
+			System.out.println(preparedStatement);
+			
+			ResultSet rs = preparedStatement.executeQuery();
+
+			while (rs.next()) {
+				int custId 		= rs.getInt("custId");
+				String firstName= rs.getString("firstName");
+				String lastName	= rs.getString("lastName");
+				String emailId 	= rs.getString("emailId");
+				String phoneNo 	= rs.getString("phoneNo");
+				String password = rs.getString("password");
+
+				
+				customer = new Customer();
+			
+				customer.setCustId(custId);
+				customer.setFirstName(firstName);
+				customer.setLastName(lastName);
+				customer.setEmailId(emailId);
+				customer.setPhoneNo(phoneNo);
+				customer.setPassword(password);
+				
+				System.out.println(customer.toString());
+			}
+		} catch (SQLException e) {
+			SqlException(e);
+		}
+		return customer;
+	}
+
+	
+	
+	
 	public List<Customer> listOfAll() {
 
 		String SELECT_ALL = "select * from customer";

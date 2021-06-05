@@ -47,7 +47,7 @@ public class MainController extends HttpServlet {
 	}
 	
 	//
-	// Handler routine for handling all 
+	// Main Handler routine for handling all events
 	// 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -56,73 +56,60 @@ public class MainController extends HttpServlet {
 		System.out.println("RoteManagement=>doGet action:" + action);
 		try {
 			switch (action) {
-			
+	
 			case "/admin":
 				formtoCall(request, response,"validate-admin-form.jsp");
 				break;
+			// validate admin password.
 			case "/admin-process":
 				adminRoute(request, response);
 				break;
 			case "/changePwd":
 				formtoCall(request, response,"change-password-form.jsp");
 				break;
+			// change admin password.
 			case "/password-process":
 				passwordProcess(request, response);
 				break;
 				
+			// Register Customer before dummpy payment
 			case "/payment-process":
 				paymentProcess(request, response);
 				break;
 				
-			case "/places":
-				formtoCall(request, response,"placess-form.jsp");
-				break;
-			case "/places-process":
-				placeProcess(request, response);
-				break;
-			case "/airlines":
-				formtoCall(request, response,"airlines-form.jsp");
-				break;
-			case "/airlines-process":
-				airlinesProcess(request, response);
-				break;	
-
+			// Insert airline Route 
 			case "/insert":
 				insertRoute(request, response);
 				break;
+			// Delete  airline Route 
 			case "/delete":
 				deleteRoute(request, response);
 				break;
 			case "/edit":
 				editForm(request,response);
 				break;
+			// update  airline Route 
 			case "/update":
 				updateRoute(request, response);
 				break;
-				
+			// search  airline Routes 	
 			case "/search":
 				listRoutesBy(request, response,"index.jsp");
 				break;
-				
+			// Final message to customer after payment
 			case "/success":
 				formtoCall(request, response,"success.jsp");
 				break;
-				
+			// When customer decided to book a ticket
 			case "/book":	
 				int routeId = Integer.parseInt(request.getParameter("routeId"));
-				if (routeDao == null ){
-					System.out.println ("routeDao is null");
-					routeDao = new RouteDao();
-				}
 				Route aRoute = routeDao.getByKey(routeId);
 				System.out.println(aRoute.toString());
 				request.setAttribute("route", aRoute);
 				formtoCall(request, response,"register-user-form.jsp");
 				break;
-			case "/book-process":
-				bookRoute(request, response);
-				break;
-			
+				
+		    //Catch all, route back to home page
 			default:
 				listRoutes(request, response,"index.jsp");
 				break;
@@ -130,7 +117,6 @@ public class MainController extends HttpServlet {
 		} catch (SQLException ex) {
 			throw new ServletException(ex);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -140,7 +126,9 @@ public class MainController extends HttpServlet {
 		doGet(request, response);
 	}
 	
-
+	//
+	// general method to call any jsp page
+	//
 	private void formtoCall(HttpServletRequest request, HttpServletResponse response,String jspName)
 			throws ServletException, IOException {
 		RequestDispatcher dispatcher = request.getRequestDispatcher(jspName);
@@ -148,7 +136,10 @@ public class MainController extends HttpServlet {
 		//response.sendRedirect(jspName); 
 	}
 	
-	
+	//
+	// method to validate admin credential and display error
+	//
+
 	private void adminRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
@@ -179,6 +170,10 @@ public class MainController extends HttpServlet {
 	    formtoCall(request, response,"validate-admin-form.jsp");
 	}
 	
+	//
+	// Validate and reset admin password 
+	//
+	
 	private void passwordProcess(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
@@ -200,37 +195,46 @@ public class MainController extends HttpServlet {
 	    formtoCall(request, response,"validate-admin-form.jsp");
 	}
 	
+	//
+	// Customer Registration and process to dummy payment
+	//
 	private void paymentProcess(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
+		Customer customer = null ;
 		String firstName=request.getParameter("firstName");  
 		String lastName	=request.getParameter("lastName");
 		String emailId	=request.getParameter("emailId");
 		String phoneNo	=request.getParameter("phoneNo");
 		String password	=request.getParameter("password");
-		
-		Customer customer = new Customer();
-		customer.setFirstName(firstName);
-		customer.setLastName(lastName);
-		customer.setEmailId(emailId);
-		customer.setPhoneNo(phoneNo);
-		customer.setPassword(password);
+			
+		customer = customerDao.getByKey(emailId);
+		if (customer == null) {
+			customer = new Customer();
+			customer.setFirstName(firstName);
+			customer.setLastName(lastName);
+			customer.setEmailId(emailId);
+			customer.setPhoneNo(phoneNo);
+			customer.setPassword(password);
+			customerDao.insert(customer);
+		}
 		
 		System.out.println(customer.toString());
-	
-		customerDao.insert(customer); // TODO Check for dupe
+
+		Route route = new Route();
 		
-		
+		int routeId = Integer.parseInt(request.getParameter("routeId"));
 		String fromCity = request.getParameter("fromCity");
 		String toCity 	= request.getParameter("toCity");	
 		String airline 	= request.getParameter("airline");
 		Long	price 	= Long.parseLong(request.getParameter("price"));
-
-		Route route = new Route();
+		
+		route.setRouteId(routeId);
 		route.setFromCity(fromCity);
 		route.setToCity(toCity);
 		route.setAirline(airline);
 		route.setPrice(price);
+		System.out.println(route.toString());
 	
 		request.setAttribute("route", route);
 		request.setAttribute("customer", customer);
@@ -239,44 +243,9 @@ public class MainController extends HttpServlet {
 	
 	}
 	
-	
-	
-	private void placeProcess(HttpServletRequest request, HttpServletResponse response) 
-			throws SQLException, IOException, Exception {
-		
-		// TODO
-	}
-	
-	private void airlinesProcess(HttpServletRequest request, HttpServletResponse response) 
-			throws SQLException, IOException, Exception {
-		
-		// TODO
-	}
-	
-	private void bookRoute(HttpServletRequest request, HttpServletResponse response) 
-			throws SQLException, IOException, Exception {
-		
-		// TODO
-	    String emailId	=request.getParameter("emailId"); 
-	    String phoneNo	=request.getParameter("phoneNo"); 
-	    String password	=request.getParameter("password");
-	    
-	    System.out.println ("emailId:"+ emailId +" password:"+ password +"Phone No" + phoneNo);   
-	    
-	    if(emailId.equals("sim@sim.com") && password.equals("sim")){ 
-	    	
-	    	request.setAttribute("title", "Admin - Add Route");
-	    	List<Route> listRoutes = routeDao.listOfAll();
-			request.setAttribute("routes", listRoutes);
-	    	formtoCall(request, response,"index.jsp");
-	    }  
-	   
-	    //should we invalidate the session ?
-        request.setAttribute("error", "Please Check - Invalid user or password");      
-	    formtoCall(request, response,"index.jsp");
-	}
-	
-	
+	//
+	// List all the routes
+	//
 	private void listRoutes(HttpServletRequest request, HttpServletResponse response,String jspToList)
 			throws SQLException, IOException, ServletException {
 		System.out.println ("in List Route");
@@ -317,6 +286,9 @@ public class MainController extends HttpServlet {
 		//response.sendRedirect("user-list.jsp"); 
 	}
 
+	//
+	// Admin main edit route form
+	//
 	private void editForm(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, ServletException, IOException {
 		int routeId = Integer.parseInt(request.getParameter("routeId"));
@@ -332,6 +304,9 @@ public class MainController extends HttpServlet {
 
 	}
 
+	//
+	// insertRoute
+	//
 	private void insertRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 
@@ -387,6 +362,10 @@ public class MainController extends HttpServlet {
 		formtoCall(request, response,"add-route-form.jsp");
 		//response.sendRedirect("list");
 	}
+	
+	//
+	// Update Route
+	//
 
 	private void updateRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
@@ -424,6 +403,9 @@ public class MainController extends HttpServlet {
 		formtoCall(request, response,"add-route-form.jsp");
 	}
 
+	//
+	// Delete route
+	//
 	private void deleteRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, ServletException {
 		int routeId = Integer.parseInt(request.getParameter("routeId"));

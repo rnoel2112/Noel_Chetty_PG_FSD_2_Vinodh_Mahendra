@@ -8,7 +8,7 @@
 	h1  {text-align: center;}
 	h2  {text-align: center;}
 	h3  {text-align: right; STYLE="background-color:red;"}
-	h4  {text-align: center;}
+	h4  {text-align: center;STYLE="color:Tomato;"}
 	p 	{text-align: center;}
 	div {text-align: center;}
 	form{text-align: center;}

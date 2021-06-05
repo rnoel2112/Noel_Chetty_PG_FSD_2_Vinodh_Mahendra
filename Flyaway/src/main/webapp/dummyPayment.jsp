@@ -13,15 +13,15 @@
 	<div>
  		<form action="success" method ="post"> 
  		
- 			<h4> Congratulations ${customer.firstName} ${customer.lastName}  </h4><br>
+ 			<h4> Hello ${customer.firstName} ${customer.lastName}  </h4><br>
 			
- 			
- 			Route Id <input type="text" id="routeId"name="routeId" value="${route.routeId}" STYLE="background-color:lightblue;"  readonly><br>
-			From City <input type="text" id="fromCity"name="fromCity" value="${route.fromCity}" STYLE="background-color:lightblue;" readonly><br>
-			To City <input type="text" id="toCity" 	name="toCity" value="${route.toCity}" STYLE="background-color:lightblue;" readonly><br>
-			Airline <input type="text" id="airline" name="airline" value="${route.airline}" STYLE="background-color:lightblue;" readonly><br>
-			Price <input type="text" id="airline" name="price" value="${route.price}" STYLE="background-color:lightblue;" readonly><br><br>
-
+			<h4 style="color:Tomato;"> Your Flight Details <br>
+ 				From ${route.fromCity}
+ 			  	  To ${route.toCity}
+ 			  	  by ${route.airline}
+ 			      cost ${route.price}<br><br>
+			 </h4>
+ 	
 			<h4> Payment Details </h4>
  		
  			Full Name <input type="text" id="fullName"name="fullName" placeholder="Fulle Name" required><br>
