@@ -310,8 +310,13 @@ public class MainController extends HttpServlet {
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
+
 		List<Route> listRoutes = routeDao.listOfAllBy(fromCity,toCity,airline,fromDate);
 		request.setAttribute("routes", listRoutes);
+		
+		if (listRoutes.size() == 0) {
+			request.setAttribute("warn", "Please refine your search or just press search"); 
+		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher(jspToList);
 		dispatcher.forward(request, response);
 		//response.sendRedirect("user-list.jsp"); 
