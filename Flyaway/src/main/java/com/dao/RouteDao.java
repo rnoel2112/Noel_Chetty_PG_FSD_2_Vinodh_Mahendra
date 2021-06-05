@@ -144,11 +144,36 @@ public class RouteDao {
 	public List<Route> listOfAllBy(String fCity, String tCity, String air, Date aDate ) {
 
 		String SELECT_ALL_BY = "select * from routes  ";
+		boolean  someVal = false;
 		
-		//
-		// To do conditions
-		//
+		if (!fCity.isEmpty()) {
+			SELECT_ALL_BY = SELECT_ALL_BY +" where fromCity ='" + fCity + "'";
+			System.out.println (SELECT_ALL_BY);
+			someVal = true;
+		}
+		if (!tCity.isEmpty()) {
+			if (someVal == true) {
+				SELECT_ALL_BY = SELECT_ALL_BY + " and toCity ='" + tCity + "'";
+			}else {
+				SELECT_ALL_BY = SELECT_ALL_BY +" where toCity ='" + tCity + "'";
+				someVal = true;
+			}
+		}
 		
+		if (!air.isEmpty()) {
+			if (someVal == true) {
+				SELECT_ALL_BY = SELECT_ALL_BY + " and airline ='" + air + "'";
+			}else {
+				SELECT_ALL_BY = SELECT_ALL_BY +" where airline ='" + air + "'";
+				someVal = true;
+			}
+		}
+		
+		//if (!aDate) {
+			//
+			// TODO
+		//}
+	
 		List<Route> routes = new ArrayList<>();
 
 		try (Connection connection = getConnection();
