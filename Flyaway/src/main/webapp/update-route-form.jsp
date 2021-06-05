@@ -20,7 +20,8 @@
 			<input type="date" id="toDate"  name="toDate"   value="${route.toDate}"  placeholder="To Date" required><br>			
 			<input type="text" id="airline" name="price"    value="${route.price}"   placeholder="Price" required><br><br>
 			<button type="submit">Update</button> &nbsp;
-			<a href="${pageContext.request.contextPath}/add-route">Back</a> <br>
+			<a href="${pageContext.request.contextPath}/admin-back">Back</a> <br>
+			
 		</form>	
 
 </body>

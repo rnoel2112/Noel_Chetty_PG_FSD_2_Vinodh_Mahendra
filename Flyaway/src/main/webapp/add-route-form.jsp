@@ -18,6 +18,7 @@
             		<option value="${place.placeId}">${place.sourceCity}</option>
         		</c:forEach>
     		</select>
+    		
     		 <select name="placeId">
         		<c:forEach items="${places}" var="place">
             		<option value="${place.placeId}">${place.destinationCity}</option>
@@ -42,7 +43,7 @@
 <%-- 			<a href="${pageContext.request.contextPath}/airlines">Airlines</a> &nbsp;
 			<a href="${pageContext.request.contextPath}/places">Places</a>  --%>
 			
-			<a href="${pageContext.request.contextPath}/">Back</a> <br>
+			<a href="${pageContext.request.contextPath}/">Home</a> <br>
 		</form>	
 		
 		<div>

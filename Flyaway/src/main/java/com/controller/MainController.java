@@ -108,6 +108,9 @@ public class MainController extends HttpServlet {
 				request.setAttribute("route", aRoute);
 				formtoCall(request, response,"register-user-form.jsp");
 				break;
+			case "/admin-back":
+				adminRefesh(request,response);
+				break;
 				
 		    //Catch all, route back to home page
 			default:
@@ -143,31 +146,59 @@ public class MainController extends HttpServlet {
 	private void adminRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
+		// not a normal path
+	    if(request.getParameter("userName")==null || 
+	    			request.getParameter("userName").equals("")) {
+	    		System.out.println ("Shouldnt acess direcly coming to admin-prrocec page - redirec to home");
+	    		List<Route> listRoutes = routeDao.listOfAll();
+	    		request.setAttribute("routes", listRoutes);
+	    		formtoCall(request,response,"index.jsp");
+	    }
+	    
 	    String userName	=request.getParameter("userName");  
 	    String password	=request.getParameter("password");
-	    
 		Admin admin = adminDao.getByKey(userName);
 		
-		List<Airline> listAirlines  = airlineDao.listOfAll();
-		List<Place> listPlaces 		= placeDao.listOfAll();
-		
-		System.out.println(admin.toString());    
-	    System.out.println ("userName:"+ userName +" password:"+ password );   
-	    
+
 	    if(password.equals(admin.getPassword())){ 	
 	    	request.setAttribute("title", "Admin - Add Route");
-	    	List<Route> listRoutes = routeDao.listOfAll();
-			request.setAttribute("routes", listRoutes);
 	    	
-			request.setAttribute("airlines", listAirlines);
-			request.setAttribute("places", listPlaces);
+	    	adminRefesh(request,response);
+	    	
 			
-	    	formtoCall(request, response,"add-route-form.jsp");
+//			List<Airline> listAirlines  = airlineDao.listOfAll();
+//			List<Place> listPlaces 		= placeDao.listOfAll();
+//			
+//			System.out.println(admin.toString());    
+//		    System.out.println ("userName:"+ userName +" password:"+ password );   
+//		    
+//	    	List<Route> listRoutes = routeDao.listOfAll();
+//			request.setAttribute("routes", listRoutes);
+//	    	
+//			request.setAttribute("airlines", listAirlines);
+//			request.setAttribute("places", listPlaces);
+//						
+//	    	formtoCall(request, response,"add-route-form.jsp");
 	    }  
 	   
 	    //should we invalidate the session ?
         request.setAttribute("error", "Please Check - Invalid user or password");      
 	    formtoCall(request, response,"validate-admin-form.jsp");
+	}
+	
+
+	private void adminRefesh(HttpServletRequest request, HttpServletResponse response) 
+			throws SQLException, IOException, Exception {
+		
+		List<Airline> listAirlines  = airlineDao.listOfAll();
+		List<Place> listPlaces 		= placeDao.listOfAll();
+		List<Route> listRoutes 		= routeDao.listOfAll();
+		
+		request.setAttribute("routes", listRoutes);
+		request.setAttribute("airlines", listAirlines);
+		request.setAttribute("places", listPlaces);
+		
+		formtoCall(request, response,"add-route-form.jsp");
 	}
 	
 	//
@@ -309,6 +340,15 @@ public class MainController extends HttpServlet {
 	//
 	private void insertRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
+		
+		// not a normal path - lets take one parm to check
+	    if(request.getParameter("price")==null || 
+	    			request.getParameter("price").equals("")) {
+	    		System.out.println ("Shouldnt acess direcly coming to admin-prrocec page - redirec to home");
+	    		List<Route> listRoutes = routeDao.listOfAll();
+	    		request.setAttribute("routes", listRoutes);
+	    		formtoCall(request,response,"index.jsp");
+	    }
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				
@@ -370,6 +410,16 @@ public class MainController extends HttpServlet {
 	private void updateRoute(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
+		
+		// not a normal path - lets take one parm to check
+	    if(request.getParameter("price")==null || 
+	    			request.getParameter("price").equals("")) {
+	    		System.out.println ("Shouldnt acess direcly coming to admin-prrocec page - redirec to home");
+	    		List<Route> listRoutes = routeDao.listOfAll();
+	    		request.setAttribute("routes", listRoutes);
+	    		formtoCall(request,response,"index.jsp");
+	    }
+		
 		System.out.println (request.getParameter("routeId"));
 		
 		int routeid = Integer.parseInt(request.getParameter("routeId"));
@@ -407,16 +457,14 @@ public class MainController extends HttpServlet {
 	// Delete route
 	//
 	private void deleteRoute(HttpServletRequest request, HttpServletResponse response) 
-			throws SQLException, IOException, ServletException {
+			throws Exception {
 		int routeId = Integer.parseInt(request.getParameter("routeId"));
 		if (routeDao == null ){
 			System.out.println ("routeDao is null");
 			routeDao = new RouteDao();
 		}
 		routeDao.delete(routeId);
-    	List<Route> listRoutes = routeDao.listOfAll();
-		request.setAttribute("routes", listRoutes);
-		formtoCall(request, response,"add-route-form.jsp");
+		adminRefesh(request,response);
 		//response.sendRedirect("list");
 
 	}	

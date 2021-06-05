@@ -25,9 +25,9 @@
 			<h4> Payment Details </h4>
  		
  			Full Name <input type="text" id="fullName"name="fullName" placeholder="Fulle Name" required><br>
- 			Card Number<input type="text" id="cardNumber"name="cardNumber" placeholder="Card Number" required><br>
-			Expiry Date <input type="text" id="expiryDate"name="expiryDate" placeholder="Expiry Date" required><br>
-			CVS number <input type="text" id="cvsNo"name="cvsNo" placeholder="CVS Number" required><br>
+ 			Card Number<input type="text" id="cardNumber"name="cardNumber" placeholder="1234-456-789" required><br>
+			Expiry Date <input type="text" id="expiryDate"name="expiryDate" placeholder="mm/yyyy" required><br>
+			CVS number <input type="number" id="cvsNo"name="cvsNo" placeholder="1234" required><br>
 			<button type="submit"> Pay </button> &nbsp;
 			<a href="${pageContext.request.contextPath}/">Cancel</a> <br>
 		</form>	
