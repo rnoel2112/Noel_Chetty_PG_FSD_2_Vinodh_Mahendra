@@ -44,6 +44,11 @@ public class MainController extends HttpServlet {
 		adminDao	= new AdminDao();
 		placeDao	= new PlaceDao();
 		airlineDao	= new AirlineDao();
+		
+		if (routeDao == null) {
+			System.out.println ("Error : Database issues - make sure you run the SQL setup");
+
+		}
 	}
 	
 	//
@@ -213,13 +218,13 @@ public class MainController extends HttpServlet {
 		String nPassword	=request.getParameter("newPassword");
 		
 		Admin admin = adminDao.getByKey(userName);
-		if(oPassword.equals(admin.getPassword())){ 	
+		if (admin !=null && oPassword.equals(admin.getPassword())){ 	
 			admin.setPassword(nPassword);
 			adminDao.update(admin); 
 			request.setAttribute("info", "Password changed successfully - relogin");      
 			formtoCall(request, response,"validate-admin-form.jsp");
+			System.out.println(admin.toString());    
 	    } 
-		System.out.println(admin.toString());    
 		
 	    //should we invalidate the session ?
         request.setAttribute("error", "Please Check - Invalid user or password");      
@@ -351,7 +356,7 @@ public class MainController extends HttpServlet {
 		request.setAttribute("routes", listRoutes);
 		
 		if (listRoutes.size() == 0) {
-			request.setAttribute("warn", "Please refine your search or just press search"); 
+			request.setAttribute("warn", "No data found , admin to create or just press search"); 
 		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher(jspToList);
 		dispatcher.forward(request, response);

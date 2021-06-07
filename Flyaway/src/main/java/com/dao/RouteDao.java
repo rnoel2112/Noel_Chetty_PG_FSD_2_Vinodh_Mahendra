@@ -143,7 +143,8 @@ public class RouteDao {
 
 	public List<Route> listOfAllBy(String fCity, String tCity, String air, Date aDate ) {
 
-		String SELECT_ALL_BY = "select * from routes  ";
+		String SELECT_ALL_BY = " select * from routes ";
+	
 		boolean  someVal = false;
 		
 		if (!fCity.isEmpty()) {
