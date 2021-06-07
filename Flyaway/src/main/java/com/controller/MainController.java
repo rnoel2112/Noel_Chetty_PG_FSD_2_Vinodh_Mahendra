@@ -72,7 +72,7 @@ public class MainController extends HttpServlet {
 				passwordProcess(request, response);
 				break;
 				
-			// Register Customer before dummpy payment
+			// Register Customer before dummy payment
 			case "/payment-process":
 				paymentProcess(request, response);
 				break;
@@ -98,7 +98,7 @@ public class MainController extends HttpServlet {
 				break;
 			// Final message to customer after payment
 			case "/success":
-				formtoCall(request, response,"success.jsp");
+				successProcess(request, response);
 				break;
 			// When customer decided to book a ticket
 			case "/book":	
@@ -208,7 +208,7 @@ public class MainController extends HttpServlet {
 	private void passwordProcess(HttpServletRequest request, HttpServletResponse response) 
 			throws SQLException, IOException, Exception {
 		
-		String userName	=request.getParameter("userName");  
+		String userName		=request.getParameter("userName");  
 		String oPassword	=request.getParameter("oldPassword");
 		String nPassword	=request.getParameter("newPassword");
 		
@@ -226,6 +226,7 @@ public class MainController extends HttpServlet {
 	    formtoCall(request, response,"validate-admin-form.jsp");
 	}
 	
+
 	//
 	// Customer Registration and process to dummy payment
 	//
@@ -238,7 +239,8 @@ public class MainController extends HttpServlet {
 		String emailId	=request.getParameter("emailId");
 		String phoneNo	=request.getParameter("phoneNo");
 		String password	=request.getParameter("password");
-			
+		
+		// avoid duplicate creation of customer if e-mail is already registered.
 		customer = customerDao.getByKey(emailId);
 		if (customer == null) {
 			customer = new Customer();
@@ -255,6 +257,7 @@ public class MainController extends HttpServlet {
 		Route route = new Route();
 		
 		int routeId = Integer.parseInt(request.getParameter("routeId"));
+		
 		String fromCity = request.getParameter("fromCity");
 		String toCity 	= request.getParameter("toCity");	
 		String airline 	= request.getParameter("airline");
@@ -272,6 +275,39 @@ public class MainController extends HttpServlet {
   
 		formtoCall(request, response,"dummyPayment.jsp");
 	
+	}
+	
+	//
+	// success-process(request, response,"success.jsp");
+	//
+	
+	private void successProcess(HttpServletRequest request, HttpServletResponse response) 
+			throws SQLException, IOException, Exception {
+		
+		Customer customer = null ;
+		Route 		route = null;
+
+		String emailId	=request.getParameter("emailId");
+		
+		// avoid duplicate creation of customer if e-mail is already registered.
+		customer = customerDao.getByKey(emailId);
+		if (customer == null) {
+			System.out.println( "Email id is empty - probelm: " + emailId);
+		}	
+		System.out.println(customer.toString());
+		
+		int routeId = Integer.parseInt(request.getParameter("routeId"));
+		
+		route = routeDao.getByKey(routeId);
+		if (route == null) {
+			System.out.println( "Route id is empty - probelm: " + routeId);
+		}
+		System.out.println(route.toString());
+	
+		request.setAttribute("route", route);
+		request.setAttribute("customer", customer);
+  
+		formtoCall(request, response,"success.jsp");
 	}
 	
 	//

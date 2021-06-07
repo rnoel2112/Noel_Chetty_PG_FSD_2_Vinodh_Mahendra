@@ -22,12 +22,18 @@
  			      cost ${route.price}<br><br>
 			 </h4>
  	
+ 			<!--  pass key values for final confirmation screen -->
+ 			<input type="hidden" id="emailId"	name="emailId"  value="${customer.emailId}">		
+ 			<input type="hidden" id="routeId"	name="routeId" 	value="${route.routeId}">
+
+ 
+ 	
 			<h4> Payment Details </h4>
  		
- 			Full Name <input type="text" id="fullName"name="fullName" placeholder="Fulle Name" required><br>
- 			Card Number<input type="text" id="cardNumber"name="cardNumber" placeholder="1234-456-789" required><br>
+ 			Full Name 	<input type="text" id="fullName"name="fullName" placeholder="Fulle Name" required><br>
+ 			Card Number	<input type="text" id="cardNumber"name="cardNumber" placeholder="1234-456-789" required><br>
 			Expiry Date <input type="text" id="expiryDate"name="expiryDate" placeholder="mm/yyyy" required><br>
-			CVS number <input type="number" id="cvsNo"name="cvsNo" placeholder="1234" required><br>
+			CVS number 	<input type="number" id="cvsNo"name="cvsNo" placeholder="1234" required><br>
 			<button type="submit"> Pay </button> &nbsp;
 			<a href="${pageContext.request.contextPath}/">Cancel</a> <br>
 		</form>	
